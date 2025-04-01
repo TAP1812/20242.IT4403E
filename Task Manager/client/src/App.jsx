@@ -5,9 +5,10 @@ import Trash from './pages/trash'
 import Users from './pages/users'
 import TaskDetails from './pages/taskDetails'
 import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 function Layout() {
-  const user = "";
+  const { user } = useSelector(state => state.auth);
   const location = useLocation();
   return user ? (
     <div className='w-full h-screen flex flex-col md:flex-row'>
@@ -23,7 +24,7 @@ function Layout() {
       </div>
     </div>
   ) : (
-    <Navigate to='/log-in' state={{ from: location }} replace/>
+    <Navigate to='/login' state={{ from: location }} replace/>
   )
 }
 
@@ -42,7 +43,8 @@ function App() {
           <Route path='/trashed' element={<Trash/>}/>
           <Route path='/task/:id' element={<TaskDetails/>}/>
         </Route>
-        <Route path='/log-in' element={<Login/>}/>
+        
+        <Route path='/login' element={<Login/>}/>
       </Routes>
     </main>
   )
