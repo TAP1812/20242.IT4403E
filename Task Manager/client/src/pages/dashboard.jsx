@@ -23,15 +23,15 @@ const TaskTable = ({ tasks }) => {
   }
 
   const TableHeader = () => (
-    <thread className='border-b border-gray-300'>
+    <thead className='border-b border-gray-300'>
       <tr className='text-black text-left'>
         <th className='py-2'>Task Title</th>
         <th className='py-2'>Priority</th>
         <th className='py-2'>Team</th>
-        <th className='py-2' hidden md:block>Created At</th>
+        <th className='py-2 hidden md:block'>Created At</th>
       </tr>
 
-    </thread>
+    </thead>
   );
 
   const TableRow = ({ task }) => <tr className='border-b border-gray-300 text-gray-600 hover:bg-gray-300/10'>
@@ -91,13 +91,13 @@ const TaskTable = ({ tasks }) => {
 
 const UserTable = ({ users }) => {
   const TableHeader = () => (
-    <thread className='border-b border-gray-300'>
+    <thead className='border-b border-gray-300'>
       <tr className='text-black text-left'>
         <th className='py-2'>Full Name</th>
         <th className='py-2'>Status</th>
         <th className='py-2'>Created At</th>
       </tr>
-    </thread>
+    </thead>
   );
 
   const TableRow = ({user})=> (

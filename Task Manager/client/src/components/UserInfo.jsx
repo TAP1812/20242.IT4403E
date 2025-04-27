@@ -1,4 +1,4 @@
-import { Popover, PopoverPanel, Transition } from '@headlessui/react';
+import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react';
 import React, { Fragment } from 'react';
 import { getInitials } from '../utils';
 
