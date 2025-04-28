@@ -7,6 +7,10 @@ import Title from '../components/Title';
 import Button from '../components/Button';
 import { IoMdAdd } from 'react-icons/io';
 import Tabs from '../components/Tabs';
+import TaskTitle from '../components/TaskTitle';
+import BoardView from '../components/BoardView';
+import { tasks } from '../assets/data';
+import Table from '../components/task/Table';
 
 const TABS = [
   { title: "Board View", icon: <MdGridView />},
@@ -19,7 +23,7 @@ const TASK_TYPE = {
   completed: "bg-green-600",
 };
 
-const tasks = () => {
+const Tasks = () => {
   const params = useParams();
 
   const [selected, setSelected] = useState(0);
@@ -46,12 +50,28 @@ const tasks = () => {
         )}
       </div>
 
-      <div>
-        <Tabs tabs={TABS} setSelected={setSelected}></Tabs>
-      </div>
+        <Tabs tabs={TABS} setSelected={setSelected}>
+          {!status&& (
+            <div className='w-full flex justify-between gap-4 md:gap-x-12 py-4'>
+              <TaskTitle label="To Do" className={TASK_TYPE.todo} />
+              <TaskTitle label="In Progress" className={TASK_TYPE["in progress"]} />
+              <TaskTitle label="Completed" className={TASK_TYPE.completed} />
+            </div>
+          )}
+
+          {
+            selected === 0 ? (
+            <BoardView tasks={tasks} />
+             ) : ( 
+             <div className='w-full'>
+              <Table tasks={tasks} />
+            </div>
+            )
+          }
+        </Tabs>
     </div>
   )
 
 }
 
-export default tasks
+export default Tasks
