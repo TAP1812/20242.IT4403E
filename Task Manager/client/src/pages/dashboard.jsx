@@ -137,7 +137,7 @@ const UserTable = ({ users }) => {
   )
 }
 
-const dashboard = () => {
+const Dashboard = () => {
   const totals = summary.tasks;
 
   const stats = [
@@ -208,4 +208,4 @@ const dashboard = () => {
   )
 }
 
-export default dashboard
+export default Dashboard

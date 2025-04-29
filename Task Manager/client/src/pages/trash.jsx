@@ -1,6 +1,6 @@
 import React from 'react'
 
-const trash = () => {
+const Trash = () => {
   return (
     <div>
       Trash
@@ -8,4 +8,4 @@ const trash = () => {
   )
 }
 
-export default trash
+export default Trash
