@@ -746,7 +746,7 @@ export const tasks = [
         type: "commented",
         activity: "Bug fixing underway!!!",
         date: "2025-04-10T18:13:14.717Z",
-        by: "65c202d4aa62f32ffd1303cc",
+        by: { _id: "65c202d4aa62f32ffd1303cc", name: "Pham Tuan Anh" },
         _id: "65c51b678064df97d208b3d6",
       },
     ],
