@@ -12,7 +12,7 @@ import { Fragment, useRef } from 'react'
 import { Button, Transition } from '@headlessui/react'
 import { IoClose } from 'react-icons/io5'
 import clsx from 'clsx'
-import { setOpenSidebar } from './redux/slices/api/authSlice'
+import { setOpenSidebar } from './redux/slices/authSlice'
 
 function Layout() {
   const { user } = useSelector(state => state.auth);
