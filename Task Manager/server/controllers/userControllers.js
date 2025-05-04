@@ -32,28 +32,57 @@ export const loginUser = async (req, res) => {
     try {
         const {email, password} = req.body;
 
-        const user = await User.findOne({email});
+        // Tìm user và bao gồm cả trường password
+        const user = await User.findOne({email}).select('+password');
 
-        if (!user) {
-            return res.status(401).json({status: false, message: "Invalid email or password"});
+        // Thông báo lỗi chung cho cả trường hợp sai email hoặc password
+        const genericErrorMessage = "Invalid credentials. Please try again.";
+
+        // Nếu không tìm thấy user hoặc user không active
+        if (!user || !user?.isActive) {
+            return res.status(401).json({
+                status: false, 
+                message: genericErrorMessage
+            });
         }
 
-        if (!user?.isActive) {
-            return res.status(401).json({status: false, message: "User is not active, contact admin"});
+        // Kiểm tra tài khoản có đang bị khóa
+        if (user.isLocked()) {
+            // Không tiết lộ thời gian chờ cụ thể
+            return res.status(401).json({
+                status: false,
+                message: "Account is temporarily locked. Please try again later."
+            });
         }
 
         const isMatch = await user.matchPassword(password);
 
-        if (user && isMatch) {
+        if (isMatch) {
+            // Reset số lần đăng nhập thất bại
+            user.loginAttempts = 0;
+            user.lockUntil = null;
+            await user.save();
+
             createJWT(res, user._id);
             user.password = undefined;
             res.status(200).json(user);
         } else {
-            return res.status(401).json({status: false, message: "Invalid email or password"});
+            // Tăng số lần đăng nhập thất bại
+            await user.incrementLoginAttempts();
+            
+            // Không tiết lộ số lần thử còn lại
+            return res.status(401).json({
+                status: false, 
+                message: genericErrorMessage
+            });
         }
     } catch (error) {
         console.log(error);
-        return res.status(400).json({status: false, message: error.message});
+        // Không trả về error.message để tránh lộ thông tin
+        return res.status(400).json({
+            status: false, 
+            message: "An error occurred. Please try again."
+        });
     }
 };
 
@@ -148,16 +177,36 @@ export const markNotificationRead = async (req, res) => {
 export const changeUserPassword = async (req, res) => {
     try {
         const {userId} = req.user;
-        const user = await User.findById(userId);
+        const {oldPassword, newPassword} = req.body;
+        
+        const user = await User.findById(userId).select('+password');
 
-        if (user) {
-            user.password = req.body.password;
-            await user.save();
-            user.password = undefined;
-            return res.status(201).json({status: true, message: "Password changed successfully"});
-        } else {
-            return res.status(401).json({status: false, message: "Invalid old password"});
+        if (!user) {
+            return res.status(404).json({status: false, message: "User not found"});
         }
+
+        // Kiểm tra mật khẩu cũ
+        const isMatch = await user.matchPassword(oldPassword);
+        if (!isMatch) {
+            return res.status(401).json({status: false, message: "Current password is incorrect"});
+        }
+
+        // Kiểm tra mật khẩu mới không được trùng với mật khẩu cũ
+        const isSamePassword = await user.matchPassword(newPassword);
+        if (isSamePassword) {
+            return res.status(400).json({
+                status: false, 
+                message: "New password must be different from current password"
+            });
+        }
+
+        user.password = newPassword;
+        await user.save();
+
+        return res.status(200).json({
+            status: true, 
+            message: "Password changed successfully"
+        });
     } catch (error) {
         console.log(error);
         return res.status(400).json({status: false, message: error.message});
