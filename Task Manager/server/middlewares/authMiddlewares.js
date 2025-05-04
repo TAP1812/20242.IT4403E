@@ -1,40 +1,36 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/user.js';
+import jwt from "jsonwebtoken";
+import User from "../models/user.js";
 
 const protectRoute = async (req, res, next) => {
     try {
-        let token = req.cookie.token;
+        const token = req.cookies.token;
 
-        if (token){
-            const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        if (!token) {
+            return res.status(401).json({ message: "Not authorized, no token" });
+        }
 
-            const resp = await User.findById(decodedToken.id).select("-isAdmin email");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.userId).select("-password");
+        next();
+    } catch (error) {
+        res.status(401);
+        throw new Error("Not authorized, token failed");
+    }
+};
 
-            req.user = {
-                email: resp.email,
-                isAdmin: resp.isAdmin,
-                userId: decodedToken.userId,
-            };
-
+const isAdminRoute = async (req, res, next) => {
+    try {
+        const user = req.user;
+        if (user && user.isAdmin) {
             next();
+        } else {
+            res.status(403);
+            throw new Error("Not authorized as admin");
         }
     } catch (error) {
-        console.log(error);
-        return res.status(401).json({
-            message: "Not authorized, try again",
-        });
+        res.status(403);
+        throw new Error("Not authorized as admin");
     }
 };
 
-const isAdminRoute = (req, res, next) => {
-    if (req.user && req.user.isAdmin) {
-      next();
-    } else {
-      return res.status(401).json({
-        status: false,
-        message: "Not authorized as admin. Try login as admin.",
-      });
-    }
-};
-
-export {isAdminRoute, protectRoute};
+export { protectRoute, isAdminRoute };
