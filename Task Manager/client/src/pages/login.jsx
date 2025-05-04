@@ -60,6 +60,7 @@ const Login = () => {
 
             <div className='flex flex-col gap-y-5'>
               <Textbox
+                id='email'
                 placeholder='email@example.com'
                 type='email'
                 name='email'
@@ -71,6 +72,7 @@ const Login = () => {
                 error={errors.email ? errors.email.message : ""}
               />
               <Textbox
+                id='password'
                 placeholder='your password'
                 type='password'
                 name='password'
@@ -80,6 +82,7 @@ const Login = () => {
                   required: "Password is required!",
                 })}
                 error={errors.password ? errors.password.message : ""}
+                autocomplete='current-password'
               />
 
               <span className='text-sm text-gray-500 hover:text-blue-600 hover:underline cursor-pointer'>
