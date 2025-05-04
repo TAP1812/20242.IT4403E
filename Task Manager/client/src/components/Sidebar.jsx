@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { MdDashboard, MdOutlineAddTask, MdTaskAlt, MdOutlinePendingActions, MdSettings } from "react-icons/md";
 import { FaTasks, FaTrashAlt, FaUsers } from "react-icons/fa";
 import { useDispatch, useSelector, useStore } from 'react-redux';
-import { setOpenSidebar } from '../redux/slices/api/authSlice';
+import { setOpenSidebar } from '../redux/slices/authSlice';
 import clsx from 'clsx';
 
 const linkData = [
