@@ -15,7 +15,7 @@ export const createTask = async (req, res) => {
             assets,
         });
 
-        let text = `New task has benn assigned to you`;
+        let text = `New task has been assigned to you`;
 
         if (task.team.length > 1) {
             text = text + `and ${task.team.length - 1} others`;
