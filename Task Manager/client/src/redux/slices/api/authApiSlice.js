@@ -1,6 +1,6 @@
 import { apiSlice } from "../apiSlice";
 
-const AUTH_URL = "/user";
+const AUTH_URL = "/users";
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

@@ -1,5 +1,6 @@
 import express from 'express';
 import Task from '../models/task.js';
+import User from '../models/user.js';
 
 const router = express.Router();
 
@@ -15,7 +16,7 @@ export const createTask = async (req, res) => {
             assets,
         });
 
-        let text = `New task has benn assigned to you`;
+        let text = `New task has been assigned to you`;
 
         if (task.team.length > 1) {
             text = text + `and ${task.team.length - 1} others`;
