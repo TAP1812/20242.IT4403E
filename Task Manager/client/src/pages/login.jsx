@@ -1,12 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import Textbox from "../components/TextBox";
 import Button from "../components/Button";
 import { useSelector } from "react-redux";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const Login = () => {
   const { user } = useSelector(state => state.auth);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [showCaptcha, setShowCaptcha] = useState(true); 
+  const [captchaValue, setCaptchaValue] = useState(null);
+
   const {
     register,
     handleSubmit,
@@ -15,18 +20,67 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const submitHandler = async (data) => {
-    console.log("submit");
+  const handleCaptchaChange = (value) => {
+    console.log("CAPTCHA value changed:", value);
+    setCaptchaValue(value);
   };
 
   useEffect(() => {
     user && navigate("/dashboard");
   }, [user]);
 
+  const submitHandler = async (data) => {
+    try {
+      console.log("Form data:", data);
+      console.log("CAPTCHA value:", captchaValue);
+
+      if (showCaptcha && !captchaValue) {
+        alert("Vui lòng xác thực CAPTCHA!");
+        return;
+      }
+
+      const formData = new URLSearchParams();
+      formData.append('email', data.email);
+      formData.append('password', data.password);
+      if (captchaValue) {
+        formData.append('captchaToken', captchaValue);
+      }
+
+      const response = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString()
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message);
+      }
+
+      setLoginAttempts(0);
+      setShowCaptcha(false);
+      setCaptchaValue(null);
+
+    } catch (error) {
+      console.error("Login error:", error);
+      
+      const newAttempts = loginAttempts + 1;
+      setLoginAttempts(newAttempts);
+
+      if (newAttempts >= 3) {
+        setShowCaptcha(true);
+      }
+
+      alert(error.message);
+    }
+  };
+
   return (
     <div className='w-full min-h-screen flex items-center justify-center flex-col lg:flex-row bg-[#f3f4f6]'>
       <div className='w-full md:w-auto flex gap-0 md:gap-40 flex-col md:flex-row items-center justify-center'>
-        {/* left side */}
         <div className='h-full w-full lg:w-2/3 flex flex-col items-center justify-center'>
           <div className='w-full md:max-w-lg 2xl:max-w-3xl flex flex-col items-center justify-center gap-5 md:gap-y-10 2xl:-mt-20'>
             <span className='flex gap-1 py-1 px-3 border rounded-full text-sm md:text-base bordergray-300 text-gray-600'>
@@ -36,14 +90,12 @@ const Login = () => {
               <span>Cloud-Based</span>
               <span>Task Manager</span>
             </p>
-
             <div className='cell'>
               <div className='circle rotate-in-up-left'></div>
             </div>
           </div>
         </div>
 
-        {/* right side */}
         <div className='w-full md:w-1/3 p-4 md:p-1 flex flex-col justify-center items-center'>
           <form
             onSubmit={handleSubmit(submitHandler)}
@@ -54,7 +106,7 @@ const Login = () => {
                 Welcome back!
               </p>
               <p className='text-center text-base text-gray-700 '>
-                Keep all your credential safge.
+                Keep all your credential safe.
               </p>
             </div>
 
@@ -84,6 +136,21 @@ const Login = () => {
                 error={errors.password ? errors.password.message : ""}
                 autocomplete='current-password'
               />
+
+              {showCaptcha && (
+                <div className="flex justify-center mt-4">
+                  <ReCAPTCHA
+                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                    onChange={handleCaptchaChange}
+                  />
+                </div>
+              )}
+
+              {loginAttempts > 0 && (
+                <span className='text-sm text-red-500 text-center'>
+                  {`Số lần thử còn lại: ${5 - loginAttempts}`}
+                </span>
+              )}
 
               <span className='text-sm text-gray-500 hover:text-blue-600 hover:underline cursor-pointer'>
                 Forget Password?
