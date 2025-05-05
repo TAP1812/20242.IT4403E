@@ -1,6 +1,6 @@
 const Loading = () => {
     return (
-        <div claseName='dots-container'>
+        <div className='dots-container'>
             <div className='dot'></div>
             <div className='dot'></div>
             <div className='dot'></div>
