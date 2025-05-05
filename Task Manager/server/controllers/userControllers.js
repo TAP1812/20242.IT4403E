@@ -138,7 +138,7 @@ export const updateUserProfile = async (req, res) => {
             user.role = req.body.role || user.role;
             user.isActive = req.body.isActive !== undefined ? req.body.isActive : user.isActive;
 
-            const updatedUser = await User.save();
+            const updatedUser = await user.save();
             user.password = undefined;
             return res.status(201).json({status: true, message: "User updated successfully", user: updatedUser});
         }
@@ -177,16 +177,16 @@ export const markNotificationRead = async (req, res) => {
 export const changeUserPassword = async (req, res) => {
     try {
         const {userId} = req.user;
-        const {oldPassword, newPassword} = req.body;
+        const {currentPassword, newPassword} = req.body;
         
         const user = await User.findById(userId).select('+password');
 
         if (!user) {
-            return res.status(404).json({status: false, message: "User not found"});
+            return res.status(404).json({status: false, message: currentPassword.message });
         }
 
         // Kiểm tra mật khẩu cũ
-        const isMatch = await user.matchPassword(oldPassword);
+        const isMatch = await user.matchPassword(currentPassword);
         if (!isMatch) {
             return res.status(401).json({status: false, message: "Current password is incorrect"});
         }

@@ -15,7 +15,7 @@ router.post("/login", loginLimiter, verifyCaptcha, loginUser);
 
 // Các routes khác
 router.post("/register", passwordValidationMiddleware, registerUser);
-router.get("/logout", logoutUser);
+router.post("/logout", logoutUser);
 
 router.get("/get-team", protectRoute, isAdminRoute, getTeamList);
 router.get("/notifications", protectRoute, getNotificationsList);

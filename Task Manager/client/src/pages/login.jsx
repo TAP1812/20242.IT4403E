@@ -59,6 +59,7 @@ const Login = () => {
           "Content-Type": "application/x-www-form-urlencoded",
         },
         body: formData.toString(),
+        credentials: "include",
       });
 
       const result = await response.json();
@@ -70,6 +71,9 @@ const Login = () => {
       setLoginAttempts(0);
       setShowCaptcha(false);
       setCaptchaValue(null);
+      dispatch(setCredentials(result));
+      navigate("/dashboard");
+
     } catch (error) {
       console.error("Login error:", error);
 
