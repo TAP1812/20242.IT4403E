@@ -15,11 +15,10 @@ const linkData = [
       label: "Tasks",
       link: "tasks",
       icon: <FaTasks />,
-    },
-    {
-      label: "Completed",
-      link: "completed/completed",
-      icon: <MdTaskAlt />,
+    },{
+      label: "To Do",
+      link: "todo/todo",
+      icon: <MdOutlinePendingActions />,
     },
     {
       label: "In Progress",
@@ -27,9 +26,9 @@ const linkData = [
       icon: <MdOutlinePendingActions />,
     },
     {
-      label: "To Do",
-      link: "todo/todo",
-      icon: <MdOutlinePendingActions />,
+      label: "Completed",
+      link: "completed/completed",
+      icon: <MdTaskAlt />,
     },
     {
       label: "Team",
@@ -80,13 +79,6 @@ const Sidebar = () => {
         { 
           sidebarLinks.map((link) =>  (<Navlink el={link} key= {link.label} />))
         }
-        </div>
-
-        <div className=''>
-          <button className='w-full flex gap-2 p-2 items-center text-lg text-gray-800 dark:text-white'>
-            <MdSettings />
-            <span>Settings</span>
-          </button>
         </div>
     </div>
   )

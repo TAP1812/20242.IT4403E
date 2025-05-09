@@ -14,6 +14,11 @@ import Button from "../components/Button";
 import { tasks } from "../assets/data";
 import { PRIORITYSTYLES, TASK_TYPE } from "../utils";
 import clsx from "clsx";
+import {
+  useDeleteRestoreTaskMutation,
+  useGetAllTaskQuery,
+} from "../redux/slices/api/taskApiSlice";
+import { toast } from "sonner";
 
 const ICONS = {
   high: <MdKeyboardDoubleArrowUp />,
@@ -27,7 +32,14 @@ const Trash = () => {
   const [msg, setMsg] = useState(null);
   const [type, setType] = useState("delete");
   const [selected, setSelected] = useState("");
-  const isLoading = false;
+
+  const { data, isLoading, refetch } = useGetAllTaskQuery({
+    strQuery: "",
+    isTrashed: "true",
+    search: "",
+  });
+
+  const [deleteRestoreTask] = useDeleteRestoreTaskMutation();
 
   const deleteAllClick = () => {
     setType("deleteAll");
@@ -52,6 +64,49 @@ const Trash = () => {
     setType("restore");
     setMsg("Do you want to restore the selected item?");
     setOpenDialog(true);
+  };
+
+  const deleteRestoreHandler = async () => {
+    try {
+      let res = null;
+
+      switch (type) {
+        case "delete":
+          res = await deleteRestoreTask({
+            id: selected,
+            actionType: "delete",
+          }).unwrap();
+          break;
+        case "deleteAll":
+          res = await deleteRestoreTask({
+            id: "",
+            actionType: "deleteAll",
+          }).unwrap();
+          break;
+        case "restore":
+          res = await deleteRestoreTask({
+            id: selected,
+            actionType: "restore",
+          }).unwrap();
+          break;
+        case "restoreAll":
+          res = await deleteRestoreTask({
+            id: "",
+            actionType: "restoreAll",
+          }).unwrap();
+          break;
+      }
+
+      toast.success(res?.message);
+
+      setTimeout(() => {
+        setOpenDialog(false);
+        refetch();
+      }, 500);
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
   };
 
   const TableHeader = () => (
@@ -136,7 +191,7 @@ const Trash = () => {
             <table className="w-full mb-5">
               <TableHeader />
               <tbody>
-                {tasks?.map((tk, id) => (
+                {data?.tasks?.map((tk, id) => (
                   <TableRow key={id} item={tk} />
                 ))}
               </tbody>

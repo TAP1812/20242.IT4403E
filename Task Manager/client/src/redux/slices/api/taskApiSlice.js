@@ -65,7 +65,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    trashTast: builder.mutation({
+    trashTask: builder.mutation({
       query: ({ id }) => ({
         url: `${TASKS_URL}/${id}`,
         method: "PUT",
@@ -73,7 +73,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    deleteRestoreTast: builder.mutation({
+    deleteRestoreTask: builder.mutation({
       query: ({ id, actionType }) => ({
         url: `${TASKS_URL}/delete-restore/${id}?actionType=${actionType}`,
         method: "DELETE",
@@ -81,7 +81,7 @@ export const postApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    getDasboardStats: builder.query({
+    getDashboardStats: builder.query({
       query: () => ({
         url: `${TASKS_URL}/dashboard`,
         method: "GET",
@@ -114,12 +114,12 @@ export const {
   useCreateTaskMutation,
   useGetAllTaskQuery,
   useCreateSubTaskMutation,
-  useTrashTastMutation,
-  useDeleteRestoreTastMutation,
+  useTrashTaskMutation,
+  useDeleteRestoreTaskMutation,
   useDuplicateTaskMutation,
   useUpdateTaskMutation,
   useGetSingleTaskQuery,
-  useGetDasboardStatsQuery,
+  useGetDashboardStatsQuery,
   useChangeTaskStageMutation,
   useChangeSubTaskStatusMutation,
 } = postApiSlice;

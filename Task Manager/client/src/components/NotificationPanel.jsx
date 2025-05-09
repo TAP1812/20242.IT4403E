@@ -34,6 +34,7 @@ const NotificationPanel = () => {
   const [selected, setSelected] = useState(null);
 
   const { data, refetch } = useGetNotificationsQuery();
+
   const [markAsRead] = useMarkNotiAsReadMutation();
 
   const viewHandler = async (el) => {

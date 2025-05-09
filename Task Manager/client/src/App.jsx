@@ -13,6 +13,7 @@ import { Button, Transition } from '@headlessui/react'
 import { IoClose } from 'react-icons/io5'
 import clsx from 'clsx'
 import { setOpenSidebar } from './redux/slices/authSlice'
+import { Toaster } from 'sonner'
 
 function Layout() {
   const { user } = useSelector(state => state.auth);
@@ -87,6 +88,7 @@ const MobileSidebar = () => {
 function App() {
   return (
     <main className='w-full min-h-screen bg-[#f3f4f6]'>
+      <Toaster />
       <Routes>
         <Route element={<Layout/>}>
           <Route index path='/' element={<Navigate to='/dashboard'/>}/>

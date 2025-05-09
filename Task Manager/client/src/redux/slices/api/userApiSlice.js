@@ -31,7 +31,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
     }),
 
     getTeamList: builder.query({
-      query: (data) => ({
+      query: () => ({
         url: `${USER_URL}/get-team`,
         method: "GET",
         credentials: "include",

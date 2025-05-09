@@ -15,7 +15,7 @@ export const registerUser = async (req, res) => {
         const user = await User.create({name, email, password, isAdmin, role, title});
 
         if (user) {
-            isAdmin ? createJWT(res, user._id) : null;
+            isAdmin ? createJWT(res, user._id, user.isAdmin) : null;
             user.password = undefined;
             res.status(201).json(user);
         } else {
@@ -63,7 +63,7 @@ export const loginUser = async (req, res) => {
             user.lockUntil = null;
             await user.save();
 
-            createJWT(res, user._id);
+            createJWT(res, user._id, user.isAdmin);
             user.password = undefined;
             res.status(200).json(user);
         } else {
@@ -111,8 +111,9 @@ export const getTeamList = async (req, res) => {
 
 export const getNotificationsList = async (req, res) => {
     try {
-        const {userId} = req.user;
-        const notice = await Notice.findOne({
+        const userId = req.user.userId;
+
+        const notice = await Notice.find({
             team: userId, 
             isRead: {$nin: [userId]},
         }).populate("task", "title");
@@ -150,7 +151,7 @@ export const updateUserProfile = async (req, res) => {
 
 export const markNotificationRead = async (req, res) => {
     try {
-        const {userId} = req.user;
+        const userId = req.user.userId;
         const {isReadType, id} = req.query;
 
         if (isReadType === "all") {
@@ -176,7 +177,7 @@ export const markNotificationRead = async (req, res) => {
 
 export const changeUserPassword = async (req, res) => {
     try {
-        const {userId} = req.user;
+        const {userId} = req.user.userId;
         const {currentPassword, newPassword} = req.body;
         
         const user = await User.findById(userId).select('+password');
