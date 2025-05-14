@@ -34,8 +34,6 @@ const AddTask = ({ open, setOpen, task }) => {
     stage: "",
     priority: "",
     assets: [],
-    description: "",
-    links: "",
   };
 
   const {

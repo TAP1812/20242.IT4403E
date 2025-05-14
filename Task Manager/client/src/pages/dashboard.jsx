@@ -15,6 +15,7 @@ import UserInfo from "../components/UserInfo";
 import { Chart } from "../components/Chart";
 import { useGetDashboardStatsQuery } from "../redux/slices/api/taskApiSlice";
 import Loading from "../components/Loader";
+import { useSelector } from "react-redux";
 
 const TaskTable = ({ tasks }) => {
   const ICONS = {
@@ -81,7 +82,7 @@ const TaskTable = ({ tasks }) => {
   );
   return (
     <>
-      <div className="w-full md:w-2/3 bg-white px-2 mdpx-4 pt-4 pb-4 shadow-md rounded">
+      <div className="w-full flex bg-white px-2 mdpx-4 pt-4 pb-4 shadow-md rounded">
         <table className="w-full">
           <TableHeader />
           <tbody>
@@ -149,6 +150,8 @@ const UserTable = ({ users }) => {
 
 const Dashboard = () => {
   const { data, isLoading } = useGetDashboardStatsQuery();
+  
+  const {user} = useSelector((state) => state.auth);
 
   if (isLoading) {
     return (
@@ -157,8 +160,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  console.log(data);
 
   const totals = data?.summary?.tasks || [];
 
@@ -230,7 +231,7 @@ const Dashboard = () => {
         {/* /left */}
         <TaskTable tasks={data?.summary?.last10Task} />
         {/* /rigth */}
-        <UserTable users={data?.summary?.users} />
+        {user?.isAdmin && <UserTable users={data?.summary?.users} />}
       </div>
     </div>
   );

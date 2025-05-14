@@ -38,13 +38,10 @@ const TaskCard = ({ task }) => {
             <span className="text-lg">{ICONS[task?.priority]}</span>
             <span className="uppercase">{task?.priority} Priority</span>
           </div>
-          {user?.isAdmin && <TaskDialog task={task} />}
+          <TaskDialog task={task} isAdmin={user?.isAdmin} />
         </div>
         <>
           <div className="flex items-center gap-2">
-            <div
-              className={clsx("w-4 h-4 rounded-full", TASK_TYPE[task.stage])}
-            />
             <h4 className="line-clamp-1 text-black">{task?.title}</h4>
             <span className="text-sm text-gray-600">
               {formatDate(new Date(task?.date))}

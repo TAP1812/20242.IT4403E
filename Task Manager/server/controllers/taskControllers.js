@@ -17,7 +17,7 @@ export const createTask = async (req, res) => {
       assets,
     });
 
-    let text = `New task has been assigned to you`;
+    let text = `New task has been assigned to you. `;
 
     if (task.team.length > 1) {
       text = text + `and ${task.team.length - 1} others`;
@@ -66,7 +66,6 @@ export const duplicateTask = async (req, res) => {
       priority: task.priority,
       stage: task.stage,
       activities: task.activities,
-      description: task.description,
       isTrashed: task.isTrashed,
     });
 
@@ -102,7 +101,7 @@ export const duplicateTask = async (req, res) => {
 export const postTaskActivity = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId  = req.user.userId;
+    const userId = req.user.userId;
     const { type, activity } = req.body;
     const task = await Task.findById(id);
     const data = {
@@ -130,7 +129,7 @@ export const dashboardStatistics = async (req, res) => {
         })
           .populate({
             path: "team",
-            select: "name role title email",
+            select: "name title",
           })
           .sort({ _id: -1 })
       : await Task.find({
@@ -139,12 +138,12 @@ export const dashboardStatistics = async (req, res) => {
         })
           .populate({
             path: "team",
-            select: "name role title email",
+            select: "name title",
           })
           .sort({ _id: -1 });
 
     const users = await User.find()
-      .select("name role title isAdmin createdAt isActive")
+      .select("name title createdAt isActive")
       .limit(10)
       .sort({ _id: -1 });
 
@@ -198,18 +197,27 @@ export const getTasks = async (req, res) => {
   try {
     const { stage, isTrashed } = req.query;
 
-    let query = { isTrashed: isTrashed ? true : false };
+    const { userId, isAdmin } = req.user;
+
+    let query = isAdmin ? { isTrashed: isTrashed ? true : false } : { isTrashed: isTrashed ? true : false, team: { $all: [userId] } };
 
     if (stage) {
       query.stage = stage;
     }
 
-    let queryResult = Task.find(query)
-      .populate({
-        path: "team",
-        select: "name title email",
-      })
-      .sort({ _id: -1 });
+    let queryResult = isAdmin
+      ? Task.find(query)
+          .populate({
+            path: "team",
+            select: "name title email",
+          })
+          .sort({ _id: -1 })
+      : Task.find(query)
+          .populate({
+            path: "team",
+            select: "name title",
+          })
+          .sort({ _id: -1 });
 
     const tasks = await queryResult;
 
@@ -230,7 +238,7 @@ export const getTask = async (req, res) => {
       })
       .populate({
         path: "activities.by",
-        select: "name",
+        select: "name -_id",
       })
       .sort({ _id: -1 });
 
@@ -246,7 +254,7 @@ export const createSubTask = async (req, res) => {
     const { title, tag, date } = req.body;
 
     const { id } = req.params;
-    
+
     const newSubTask = {
       title,
       date,
@@ -332,9 +340,10 @@ export const deleteRestoreTask = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      message: (actionType === "restore" || actionType === "restoreAll")
-        ? "Task restored successfully"
-        : "Task deleted successfully",
+      message:
+        actionType === "restore" || actionType === "restoreAll"
+          ? "Task restored successfully"
+          : "Task deleted successfully",
     });
   } catch (error) {
     console.log(error);
