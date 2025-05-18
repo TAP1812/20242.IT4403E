@@ -39,10 +39,9 @@ const AddUser = ({ open, setOpen, userData }) => {
           dispatch(setCredentials({ ...result.user }));
         }
       } else {
-        await addNewUser({
-          ...data,
-          password: "P@ssw0rd",
-        }).unwrap();
+        // Không gửi trường password nữa
+        const { password, ...rest } = data;
+        await addNewUser(rest).unwrap();
 
         toast.success("New users added successfully");
       }

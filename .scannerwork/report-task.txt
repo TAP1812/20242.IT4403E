@@ -1,0 +1,6 @@
+projectKey=Web-Security
+serverUrl=http://localhost:9000
+serverVersion=25.5.0.107428
+dashboardUrl=http://localhost:9000/dashboard?id=Web-Security
+ceTaskId=7b9a2926-2e1d-4857-adae-a8aeee906ae3
+ceTaskUrl=http://localhost:9000/api/ce/task?id=7b9a2926-2e1d-4857-adae-a8aeee906ae3

@@ -4,7 +4,7 @@ import { createJWT } from "../utils/index.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, isAdmin, role, title } = req.body;
+    const { name, email, isAdmin, role, title } = req.body;
 
     const userExist = await User.findOne({ email });
 
@@ -14,13 +14,48 @@ export const registerUser = async (req, res) => {
         .json({ status: false, message: "User already exists" });
     }
 
-    const user = await User.create({
+    // Tạo password ngẫu nhiên phía server, đảm bảo đủ mạnh theo middleware
+    function generateStrongPassword(name, email) {
+      const specials = '!@#$%^&*()_+[]{}|;:,.<>?';
+      const lowers = 'abcdefghijklmnopqrstuvwxyz';
+      const uppers = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const numbers = '0123456789';
+      let password = '';
+      // Đảm bảo mỗi loại ký tự đều có ít nhất 1 ký tự
+      password += specials[Math.floor(Math.random() * specials.length)];
+      password += lowers[Math.floor(Math.random() * lowers.length)];
+      password += uppers[Math.floor(Math.random() * uppers.length)];
+      password += numbers[Math.floor(Math.random() * numbers.length)];
+      // Thêm ngẫu nhiên các ký tự còn lại
+      const all = specials + lowers + uppers + numbers;
+      while (password.length < 12) {
+        password += all[Math.floor(Math.random() * all.length)];
+      }
+      // Đảm bảo không chứa tên hoặc email
+      if (name && password.toLowerCase().includes(name.toLowerCase())) {
+        return generateStrongPassword(name, email);
+      }
+      if (email && password.toLowerCase().includes(email.toLowerCase())) {
+        return generateStrongPassword(name, email);
+      }
+      // Xáo trộn chuỗi
+      return password.split('').sort(() => 0.5 - Math.random()).join('');
+    }
+
+    const randomPassword = generateStrongPassword(name, email);
+
+    await User.create({
       name,
       email,
-      password,
+      password: randomPassword,
       isAdmin,
       role,
       title,
+    });
+    // Chỉ trả về thông báo thành công, không trả về user hay password
+    return res.status(201).json({
+      status: true,
+      message: "User created successfully"
     });
   } catch (error) {
     console.log(error);
