@@ -126,7 +126,7 @@ const Login = () => {
                 placeholder="email@example.com"
                 type="email"
                 name="email"
-                label="Email Address"
+                label="Email"
                 className="w-full rounded-full"
                 register={register("email", {
                   required: "Email Address is required!",
@@ -135,7 +135,7 @@ const Login = () => {
               />
               <Textbox
                 id="password"
-                placeholder="your password"
+                placeholder="Password"
                 type="password"
                 name="password"
                 label="Password"

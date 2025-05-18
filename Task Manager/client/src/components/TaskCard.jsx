@@ -38,13 +38,10 @@ const TaskCard = ({ task }) => {
             <span className="text-lg">{ICONS[task?.priority]}</span>
             <span className="uppercase">{task?.priority} Priority</span>
           </div>
-          {user?.isAdmin && <TaskDialog task={task} />}
+          <TaskDialog task={task} isAdmin={user?.isAdmin} />
         </div>
         <>
           <div className="flex items-center gap-2">
-            <div
-              className={clsx("w-4 h-4 rounded-full", TASK_TYPE[task.stage])}
-            />
             <h4 className="line-clamp-1 text-black">{task?.title}</h4>
             <span className="text-sm text-gray-600">
               {formatDate(new Date(task?.date))}
@@ -89,19 +86,23 @@ const TaskCard = ({ task }) => {
         {/* sub tasks */}
         {task?.subTasks?.length > 0 ? (
           <div className="py-4 border-t border-gray-200">
-            <h5 className="text-base line-clamp-1 text-black">
-              {task?.subTasks[0].title}
-            </h5>
+            {task?.subTasks?.map((subTask, index) => (
+              <div key={index} className="mb-4">
+                <h5 className="text-base line-clamp-1 text-black">
+                  {subTask.title}
+                </h5>
 
-            <div className="p-4 space-x-8">
-              <span className="text-sm text-gray-600">
-                {formatDate(new Date(task?.subTasks[0]?.date))}
-              </span>
+                <div className="p-4 space-x-8">
+                  <span className="text-sm text-gray-600">
+                    {formatDate(new Date(subTask?.date))}
+                  </span>
 
-              <span className="bg-blue-600/10 px-3 py-1 rounded-full text-blue-700 font-medium">
-                {task?.subTasks[0].tag}
-              </span>
-            </div>
+                  <span className="bg-blue-600/10 px-3 py-1 rounded-full text-blue-700 font-medium">
+                    {subTask.tag}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         ) : (
           <>

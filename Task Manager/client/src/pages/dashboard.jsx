@@ -9,13 +9,13 @@ import { LuClipboardList } from "react-icons/lu";
 import { FaNewspaper, FaUsers } from "react-icons/fa";
 import { FaArrowsToDot } from "react-icons/fa6";
 import moment from "moment";
-import { summary } from "../assets/data";
 import clsx from "clsx";
 import { BGS, getInitials, PRIORITYSTYLES, TASK_TYPE } from "../utils";
 import UserInfo from "../components/UserInfo";
 import { Chart } from "../components/Chart";
-import { useGetDasboardStatsQuery } from "../redux/slices/api/taskApiSlice";
+import { useGetDashboardStatsQuery } from "../redux/slices/api/taskApiSlice";
 import Loading from "../components/Loader";
+import { useSelector } from "react-redux";
 
 const TaskTable = ({ tasks }) => {
   const ICONS = {
@@ -82,7 +82,7 @@ const TaskTable = ({ tasks }) => {
   );
   return (
     <>
-      <div className="w-full md:w-2/3 bg-white px-2 mdpx-4 pt-4 pb-4 shadow-md rounded">
+      <div className="w-full flex bg-white px-2 mdpx-4 pt-4 pb-4 shadow-md rounded">
         <table className="w-full">
           <TableHeader />
           <tbody>
@@ -149,7 +149,9 @@ const UserTable = ({ users }) => {
 };
 
 const Dashboard = () => {
-  const { data, isLoading } = useGetDasboardStatsQuery();
+  const { data, isLoading } = useGetDashboardStatsQuery();
+  
+  const {user} = useSelector((state) => state.auth);
 
   if (isLoading) {
     return (
@@ -159,13 +161,13 @@ const Dashboard = () => {
     );
   }
 
-  const totals = data?.tasks || [] ;
+  const totals = data?.summary?.tasks || [];
 
   const stats = [
     {
       _id: "1",
       label: "TOTAL TASK",
-      total: data?.totalTasks || 0,
+      total: data?.summary?.totalTasks || 0,
       icon: <FaNewspaper />,
       bg: "bg-[#1d4ed8]",
     },
@@ -194,11 +196,10 @@ const Dashboard = () => {
 
   const Card = ({ label, count, icon, bg }) => {
     return (
-      <div className="w-full h-32 bg-white p-5 shadow-md rounded-md flex items-center justify-between">
+      <div className="w-full h-20 bg-white p-5 shadow-md rounded-md flex items-center justify-between">
         <div className="h-full flex flex-1 flex-col justify-between">
           <p className="text-base text-gray-600">{label}</p>
           <span className="text-2x1 font-semibold">{count}</span>
-          <span className="text-sm text-gray-400">{"100 last month"}</span>
         </div>
 
         <div
@@ -224,13 +225,13 @@ const Dashboard = () => {
         <h4 className="text-x1 text-grey-600 font-semibold">
           Chart By Priority
         </h4>
-        <Chart />
+        <Chart data={data?.summary?.graphData} />
       </div>
       <div className="w-full flex flex-col md:flex-row gap-4 2x1:gap-10 py-8">
         {/* /left */}
-        <TaskTable tasks={summary.last10Task} />
+        <TaskTable tasks={data?.summary?.last10Task} />
         {/* /rigth */}
-        <UserTable users={summary.users} />
+        {user?.isAdmin && <UserTable users={data?.summary?.users} />}
       </div>
     </div>
   );

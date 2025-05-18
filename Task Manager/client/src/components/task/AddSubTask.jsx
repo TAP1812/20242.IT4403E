@@ -2,12 +2,11 @@ import { DialogTitle } from "@headlessui/react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-// import { useCreateSubTaskMutation } from "../../redux/slices/api/taskApiSlice";
 import Button from "../Button";
 import Loading from "../Loader";
 import ModelWrapper from "../ModelWrapper";
 import Textbox from "../TextBox";
+import { useCreateSubTaskMutation } from "../../redux/slices/api/taskApiSlice";
 
 const AddSubTask = ({ open, setOpen, id }) => {
   const {
@@ -16,22 +15,23 @@ const AddSubTask = ({ open, setOpen, id }) => {
     formState: { errors },
   } = useForm();
 
-  const isLoading = false;
-//   const [addSubTask, { isLoading }] = useCreateSubTaskMutation();
+  const [addSubTask, { isLoading }] = useCreateSubTaskMutation();
 
   const handleOnSubmit = async (data) => {
-    // try {
-    //   const res = await addSubTask({ data, id }).unwrap();
+    try {
+      console.log(data);
 
-    //   toast.success(res.message);
+      const res = await addSubTask({ data, id }).unwrap();
 
-    //   setTimeout(() => {
-    //     setOpen(false);
-    //   }, 500);
-    // } catch (err) {
-    //   console.log(err);
-    //   toast.error(err?.data?.message || err.error);
-    // }
+      toast.success(res.message);
+
+      setTimeout(() => {
+        setOpen(false);
+      }, 500);
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || err.error);
+    }
   };
 
   return (

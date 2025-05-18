@@ -16,21 +16,21 @@ const linkData = [
       link: "tasks",
       icon: <FaTasks />,
     },
-    {
-      label: "Completed",
-      link: "completed/completed",
-      icon: <MdTaskAlt />,
-    },
-    {
-      label: "In Progress",
-      link: "in-progress/in progress",
-      icon: <MdOutlinePendingActions />,
-    },
-    {
-      label: "To Do",
-      link: "todo/todo",
-      icon: <MdOutlinePendingActions />,
-    },
+    // {
+    //   label: "To Do",
+    //   link: "todo/todo",
+    //   icon: <MdOutlinePendingActions />,
+    // },
+    // {
+    //   label: "In Progress",
+    //   link: "in-progress/in progress",
+    //   icon: <MdOutlinePendingActions />,
+    // },
+    // {
+    //   label: "Completed",
+    //   link: "completed/completed",
+    //   icon: <MdTaskAlt />,
+    // },
     {
       label: "Team",
       link: "team",
@@ -51,7 +51,7 @@ const Sidebar = () => {
 
     const path = location.pathname.split("/")[1];
 
-    const sidebarLinks = user?.isAdmin ? linkData : linkData.slice(0, 5);
+    const sidebarLinks = user?.isAdmin ? linkData : linkData.slice(0, 2);
 
     const closeSidebar = () => {
         dispatch(setOpenSidebar(false));
@@ -80,13 +80,6 @@ const Sidebar = () => {
         { 
           sidebarLinks.map((link) =>  (<Navlink el={link} key= {link.label} />))
         }
-        </div>
-
-        <div className=''>
-          <button className='w-full flex gap-2 p-2 items-center text-lg text-gray-800 dark:text-white'>
-            <MdSettings />
-            <span>Settings</span>
-          </button>
         </div>
     </div>
   )
