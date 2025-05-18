@@ -5,7 +5,6 @@ import Textbox from "../components/TextBox";
 import Button from "../components/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../redux/slices/api/authApiSlice";
-import { toast } from "sonner";
 import { setCredentials } from "../redux/slices/authSlice";
 import Loading from "../components/Loader";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -38,8 +37,6 @@ const Login = () => {
 
   const submitHandler = async (data) => {
     try {
-      console.log("Form data:", data);
-      console.log("CAPTCHA value:", captchaValue);
 
       if (showCaptcha && !captchaValue) {
         alert("Vui lòng xác thực CAPTCHA!");

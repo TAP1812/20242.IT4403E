@@ -11,6 +11,7 @@ import { data } from "react-router-dom";
 import { toast } from "sonner";
 import { useUpdateUserMutation } from "../redux/slices/api/userApiSlice";
 import { setCredentials } from "../redux/slices/authSlice";
+import { useEffect } from "react";
 
 const AddUser = ({ open, setOpen, userData }) => {
   let defaultValues = userData ?? {};

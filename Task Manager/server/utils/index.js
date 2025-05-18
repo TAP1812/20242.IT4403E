@@ -18,7 +18,7 @@ export const createJWT = (res, userId, isAdmin) => {
         httpOnly: true,
         // secure: process.env.NODE_ENV !== "development",
         secure: true,
-        sameSite: "None", //prevent CSRF 
+        sameSite: "Strict", //prevent CSRF 
         maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 }

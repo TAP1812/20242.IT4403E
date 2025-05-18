@@ -14,7 +14,7 @@ router.use(globalLimiter);
 router.post("/login", loginLimiter, verifyCaptcha, loginUser);
 
 // Các routes khác
-router.post("/register", passwordValidationMiddleware, registerUser);
+router.post("/register", passwordValidationMiddleware, protectRoute, isAdminRoute, registerUser);
 router.post("/logout", logoutUser);
 
 router.get("/get-team", protectRoute, isAdminRoute, getTeamList);

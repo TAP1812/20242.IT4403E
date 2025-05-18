@@ -11,7 +11,6 @@ import AddUser from "../components/AddUser";
 import Loading from "../components/Loader";
 import Title from "../components/Title";
 import Button from "../components/Button";
-import { tasks } from "../assets/data";
 import { PRIORITYSTYLES, TASK_TYPE } from "../utils";
 import clsx from "clsx";
 import {

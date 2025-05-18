@@ -1,5 +1,3 @@
-import React from 'react';
-import { summary } from '../../assets/data';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from '@headlessui/react';
 import { Fragment, useEffect, useState } from 'react';
 import { BsChevronExpand } from 'react-icons/bs';

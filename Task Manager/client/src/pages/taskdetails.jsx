@@ -94,7 +94,7 @@ const Activities = ({ activity, id, refetch }) => {
         type: selected?.toLowerCase(),
         activity: text,
       };
-      
+
       const res = await postActivity({
         data,
         id,
@@ -312,15 +312,32 @@ const Taskdetails = () => {
               <div className="w-full md:w-1/2 space-y-8">
                 <p className="text-lg font-semibold">ASSETS</p>
 
-                <div className="w-full grid grid-cols-2 gap-4">
-                  {task?.assets?.map((el, index) => (
-                    <img
-                      key={index}
-                      src={el}
-                      alt={task?.title}
-                      className="w-full rounded h-28 md:h-36 2xl:h-52 cursor-pointer transition-all duration-700 hover:scale-125 hover:z-50"
-                    />
-                  ))}
+                <div className="w-full space-y-8">
+                  <p className="text-lg font-semibold">ASSETS</p>
+
+                  <div className="w-full flex flex-col gap-4">
+                    {task?.assets?.map((el, index) => {
+                      const rawFileName = el.split("/").pop().split("_").pop();
+                      const decodedFileName = decodeURIComponent(
+                        rawFileName || ""
+                      );
+
+                      return (
+                        <div
+                          key={index}
+                          className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm w-full"
+                        >
+                          <a
+                            href={el}
+                            download={decodedFileName}
+                            className="block text-sm text-blue-600 hover:underline truncate"
+                          >
+                            {decodedFileName}
+                          </a>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
