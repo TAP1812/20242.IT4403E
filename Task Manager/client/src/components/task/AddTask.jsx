@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModelWrapper from "../ModelWrapper";
 import { DialogTitle } from "@headlessui/react";
 import Textbox from "../TextBox";
@@ -17,8 +17,6 @@ import { dateFormatter } from "../../utils";
 const LISTS = ["TODO", "IN PROGRESS", "COMPLETED"];
 const PRIORITY = ["HIGH", "MEDIUM", "NORMAL", "LOW"];
 
-const uploadedFileURLs = [];
-
 const AddTask = ({ open, setOpen, task }) => {
   const defaultValues = {
     title: task?.title || "",
@@ -33,7 +31,21 @@ const AddTask = ({ open, setOpen, task }) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({ defaultValues });
+
+  useEffect(() => {
+  if (!open) {
+    reset({
+      title: "",
+      date: dateFormatter(new Date()),
+      team: [],
+      stage: "",
+      priority: "",
+      assets: [],
+    });
+  }
+}, [open, reset]);
 
   const [team, setTeam] = useState(task?.team || []);
   const [stage, setStage] = useState(task?.stage?.toUpperCase() || LISTS[0]);
@@ -116,37 +128,6 @@ const AddTask = ({ open, setOpen, task }) => {
 
   const handleSelect = (e) => {
     setAssets(e.target.files);
-  };
-
-  const uploadFile = async (file) => {
-    const storage = getStorage(app);
-
-    const name = file.name;
-    const storageRef = ref(storage, name);
-
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    return new Promise((resolve, reject) => {
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          console.log("Uploading");
-        },
-        (error) => {
-          reject(error);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref)
-            .then((downloadURL) => {
-              uploadedFileURLs.push(downloadURL);
-              resolve();
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        }
-      );
-    });
   };
 
   return (

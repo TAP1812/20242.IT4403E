@@ -65,6 +65,7 @@ const Login = () => {
         throw new Error(result.message);
       }
 
+      window.location.reload();
       setLoginAttempts(0);
       setShowCaptcha(false);
       setCaptchaValue(null);

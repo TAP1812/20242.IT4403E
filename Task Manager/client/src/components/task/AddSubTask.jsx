@@ -19,8 +19,6 @@ const AddSubTask = ({ open, setOpen, id }) => {
 
   const handleOnSubmit = async (data) => {
     try {
-      console.log(data);
-
       const res = await addSubTask({ data, id }).unwrap();
 
       toast.success(res.message);

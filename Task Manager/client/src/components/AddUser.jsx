@@ -14,8 +14,9 @@ import { setCredentials } from "../redux/slices/authSlice";
 import { useEffect } from "react";
 
 const AddUser = ({ open, setOpen, userData }) => {
-  let defaultValues = userData ?? {};
+
   const { user } = useSelector((state) => state.auth);
+  const defaultValues = userData ?? {};
 
   const {
     register,
@@ -35,7 +36,7 @@ const AddUser = ({ open, setOpen, userData }) => {
 
         toast.success("Profile updated successfully");
 
-        if (userData?._id === user._id) {
+        if (userData?._id === user._id ) {
           dispatch(setCredentials({ ...result.user }));
         }
       } else {
