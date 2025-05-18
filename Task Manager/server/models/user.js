@@ -17,8 +17,10 @@ const userSchema = new Schema({
     loginAttempts: {type: Number, default: 0}, // Đếm số lần đăng nhập thất bại
     lockUntil: {type: Date}, // Thời gian khóa tài khoản
     lastPasswordChange: {type: Date, default: Date.now}, // Thời gian đổi password gần nhất
-    },
-    {timestamps: true}
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
+},
+{timestamps: true}
 );
 
 userSchema.pre("save", async function (next){

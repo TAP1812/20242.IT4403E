@@ -4,6 +4,7 @@ import User from "../models/user.js";
 import Notice from "../models/notification.js";
 import bucket from "../config/firebase.js";
 import { v4 as uuidv4 } from 'uuid';
+import { sendUserCreatedMail, sendTaskAssignedMail } from "../utils/mail.js";
 
 const router = express.Router();
 
@@ -11,29 +12,27 @@ export const createTask = async (req, res) => {
   try {
     const { title, team, stage, date, priority } = req.body;
 
-    const uploadedUrls = await Promise.all(
-      req.files.map(file => {
-        const fileName = `${uuidv4()}_${file.originalname}`;
-        const fileUpload = bucket.file(fileName);
-
-        return new Promise((resolve, reject) => {
-          const stream = fileUpload.createWriteStream({
-            metadata: { contentType: file.mimetype },
-            resumable: false,
-          });
-
-          stream.on('error', reject);
-
-          stream.on('finish', async () => {
-            await fileUpload.makePublic();
-            const url = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
-            resolve(url);
-          });
-
-          stream.end(file.buffer);
-        });
-      })
-    );
+    const uploadedUrls = req.files && req.files.length > 0
+      ? await Promise.all(
+          req.files.map(file => {
+            const fileName = `${uuidv4()}_${file.originalname}`;
+            const fileUpload = bucket.file(fileName);
+            return new Promise((resolve, reject) => {
+              const stream = fileUpload.createWriteStream({
+                metadata: { contentType: file.mimetype },
+                resumable: false,
+              });
+              stream.on('error', reject);
+              stream.on('finish', async () => {
+                await fileUpload.makePublic();
+                const url = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+                resolve(url);
+              });
+              stream.end(file.buffer);
+            });
+          })
+        )
+      : [];
 
     const task = await Task.create({
       title,
@@ -44,21 +43,32 @@ export const createTask = async (req, res) => {
       assets: uploadedUrls,
     });
 
-    let text = `New task has been assigned to you. `;
-
+    let text = `New task has been assigned to you.`;
     if (task.team.length > 1) {
-      text = text + `and ${task.team.length - 1} others. `;
+      text = text + ` and ${task.team.length - 1} others.`;
     }
-
-    text =
-      text +
-      `The task priority is set a ${priority} priority, so check and act accordingly. The task date is ${task.date.toDateString()}. Thank you!`;
+    text = text + ` The task priority is set as ${priority} priority, so check and act accordingly. The task date is ${new Date(task.date).toLocaleDateString()}. Thank you!`;
 
     await Notice.create({
       team,
       text,
       task: task._id,
     });
+
+    // Gửi mail thông báo task cho từng thành viên
+    const users = await User.find({ _id: { $in: team } });
+    for (const user of users) {
+      if (user.email) {
+        await sendTaskAssignedMail({
+          to: user.email,
+          name: user.name,
+          title: task.title,
+          date: task.date,
+          stage: task.stage,
+          priority: task.priority,
+        });
+      }
+    }
 
     return res
       .status(200)

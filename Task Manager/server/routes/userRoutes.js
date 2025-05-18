@@ -3,7 +3,7 @@ import { isAdminRoute, protectRoute } from '../middlewares/authMiddlewares.js';
 import { passwordValidationMiddleware } from '../middlewares/passwordMiddleware.js';
 import { verifyCaptcha } from '../middlewares/captchaMiddleware.js';
 import { globalLimiter, loginLimiter } from '../middlewares/rateLimitMiddleware.js';
-import { activateUserProfile, changeUserPassword, deleteUserProfile, getNotificationsList, getTeamList, loginUser, logoutUser, markNotificationRead, registerUser, updateUserProfile } from '../controllers/userControllers.js';
+import { activateUserProfile, changeUserPassword, deleteUserProfile, getNotificationsList, getTeamList, loginUser, logoutUser, markNotificationRead, registerUser, updateUserProfile, resetPassword, requestResetPassword, confirmResetPassword } from '../controllers/userControllers.js';
 
 const router = express.Router();
 
@@ -16,6 +16,9 @@ router.post("/login", loginLimiter, verifyCaptcha, loginUser);
 // Các routes khác
 router.post("/register", passwordValidationMiddleware, protectRoute, isAdminRoute, registerUser);
 router.post("/logout", logoutUser);
+router.post("/reset-password", resetPassword);
+router.post("/request-reset-password", globalLimiter, requestResetPassword);
+router.post("/confirm-reset-password", passwordValidationMiddleware, confirmResetPassword);
 
 router.get("/get-team", protectRoute, isAdminRoute, getTeamList);
 router.get("/notifications", protectRoute, getNotificationsList);
