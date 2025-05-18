@@ -8,13 +8,6 @@ import SelectList from "../SelectList";
 import Button from "../Button";
 import { BiImages } from "react-icons/bi";
 import {
-  getStorage,
-  ref,
-  getDownloadURL,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { app } from "../../utils/firebase";
-import {
   useCreateTaskMutation,
   useUpdateTaskMutation,
 } from "../../redux/slices/api/taskApiSlice";
