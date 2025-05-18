@@ -1,9 +1,11 @@
 import TaskCard from "./TaskCard";
 
 const BoardView = ({ tasks }) => {
-  const todoTasks = tasks.filter((task) => task.stage === "todo");
-  const inProgressTasks = tasks.filter((task) => task.stage === "in progress");
-  const completedTasks = tasks.filter((task) => task.stage === "completed");
+  // Đảm bảo tasks luôn là mảng, tránh lỗi khi undefined/null
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  const todoTasks = safeTasks.filter((task) => task.stage === "todo");
+  const inProgressTasks = safeTasks.filter((task) => task.stage === "in progress");
+  const completedTasks = safeTasks.filter((task) => task.stage === "completed");
 
   const columns = [
     { title: "To Do", tasks: todoTasks },
@@ -23,6 +25,5 @@ const BoardView = ({ tasks }) => {
     </div>
   );
 };
-
 
 export default BoardView;

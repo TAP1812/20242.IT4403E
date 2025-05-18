@@ -1,6 +1,7 @@
 import Notice from "../models/notification.js";
 import User from "../models/user.js";
 import { createJWT } from "../utils/index.js";
+import { sendUserCreatedMail } from "../utils/mail.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -52,6 +53,16 @@ export const registerUser = async (req, res) => {
       role,
       title,
     });
+
+    // Gửi mail thông báo tài khoản cho user
+    await sendUserCreatedMail({
+      to: email,
+      name,
+      title,
+      role,
+      password: randomPassword,
+    });
+
     // Chỉ trả về thông báo thành công, không trả về user hay password
     return res.status(201).json({
       status: true,
