@@ -3,7 +3,8 @@ import Dashboard from './pages/dashboard'
 import Tasks from './pages/tasks'
 import Trash from './pages/trash'
 import Users from './pages/users'
-import TaskDetails from './pages/taskDetails'
+import TaskDetails from './pages/taskdetails'
+import ResetPassword from './pages/resetpassword'
 import { Routes, Route, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import Sidebar from './components/Sidebar'
@@ -90,16 +91,17 @@ function App() {
     <main className="w-full min-h-screen bg-[#f3f4f6]">
       <Toaster />
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<Layout />}>
-          <Route index path="/" element={<Navigate to="/dashboard" />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tasks" element={<Tasks />} />
-          <Route path="/team" element={<Users />} />
+          <Route path="/tasks/:status" element={<Tasks />} />
+          <Route path="/tasks/details/:id" element={<TaskDetails />} />
+          <Route path="/users" element={<Users />} />
           <Route path="/trashed" element={<Trash />} />
-          <Route path="/task/:id" element={<TaskDetails />} />
         </Route>
-
-        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
     </main>
   );

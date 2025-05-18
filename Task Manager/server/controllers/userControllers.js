@@ -1,7 +1,8 @@
 import Notice from "../models/notification.js";
 import User from "../models/user.js";
 import { createJWT } from "../utils/index.js";
-import { sendUserCreatedMail } from "../utils/mail.js";
+import { sendUserCreatedMail, sendResetPasswordMail } from "../utils/mail.js";
+import crypto from "crypto";
 
 export const registerUser = async (req, res) => {
   try {
@@ -300,6 +301,81 @@ export const deleteUserProfile = async (req, res) => {
     return res
       .status(201)
       .json({ status: true, message: "User deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ status: false, message: error.message });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+    // Tạo token và hạn sử dụng
+    const crypto = await import('crypto');
+    const token = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 1000 * 60 * 30; // 30 phút
+    await user.save();
+    // Gửi mail chứa link reset
+    const resetLink = `${process.env.FRONTEND_URL || "http://localhost:3000"}/reset-password?token=${token}`;
+    await sendResetPasswordMail({
+      to: user.email,
+      name: user.name,
+      resetLink
+    });
+    return res.status(200).json({ status: true, message: "If this email exists, a reset link has been sent." });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ status: false, message: error.message });
+  }
+};
+
+export const requestResetPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    // Không tiết lộ email có tồn tại hay không
+    if (!user) {
+      return res.status(200).json({ status: true, message: "If this email exists, a reset link has been sent." });
+    }
+    // Tạo token và hạn sử dụng
+    const token = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 1000 * 60 * 30; // 30 phút
+    await user.save();
+    // Gửi mail chứa link reset
+    const resetLink = `${process.env.FRONTEND_URL || "http://localhost:3000"}/reset-password?token=${token}`;
+    await sendResetPasswordMail({
+      to: user.email,
+      name: user.name,
+      resetLink
+    });
+    return res.status(200).json({ status: true, message: "If this email exists, a reset link has been sent." });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ status: false, message: error.message });
+  }
+};
+
+export const confirmResetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+    if (!user) {
+      return res.status(400).json({ status: false, message: "Invalid or expired token." });
+    }
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    return res.status(200).json({ status: true, message: "Password has been reset successfully." });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ status: false, message: error.message });
