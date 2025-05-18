@@ -1,10 +1,11 @@
 import express from 'express';
 import { isAdminRoute, protectRoute } from '../middlewares/authMiddlewares.js';
 import { createSubTask, createTask, dashboardStatistics, deleteRestoreTask, duplicateTask, getTask, getTasks, postTaskActivity, trashTask, updateTask } from '../controllers/taskControllers.js';
+import uploadAssets from '../middlewares/uploadMiddlewares.js';
 
 const router = express.Router();
 
-router.post("/create", protectRoute, createTask);
+router.post("/create", protectRoute, isAdminRoute, uploadAssets, createTask);
 router.post("/duplicate/:id", protectRoute, isAdminRoute, duplicateTask);
 router.post("/activity/:id", protectRoute, postTaskActivity);
 

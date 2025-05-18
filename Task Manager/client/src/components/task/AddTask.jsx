@@ -55,40 +55,69 @@ const AddTask = ({ open, setOpen, task }) => {
   const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
   const URLS = task?.assets ? [...task.assets] : [];
 
-  const submitHandler = async (data) => {
-    for (const file of assets) {
-      setUploading(true);
-      try {
-        await uploadFile(file);
-      } catch (error) {
-        console.error("Error uploading file:", error.message);
-        return;
-      } finally {
-        setUploading(false);
-      }
-    }
+  // const submitHandler = async (data) => {
+  //   for (const file of assets) {
+  //     setUploading(true);
+  //     try {
+  //       await uploadFile(file);
+  //     } catch (error) {
+  //       console.error("Error uploading file:", error.message);
+  //       return;
+  //     } finally {
+  //       setUploading(false);
+  //     }
+  //   }
 
+  //   try {
+  //     const newData = {
+  //       ...data,
+  //       assets: [...URLS, ...uploadedFileURLs],
+  //       team,
+  //       stage,
+  //       priority,
+  //     };
+
+  //     const res = task?._id
+  //       ? await updateTask({ ...newData, _id: task._id }).unwrap()
+  //       : await createTask(newData).unwrap();
+
+  //     toast.success(res.message);
+
+  //     setTimeout(() => {
+  //       setOpen(false);
+  //     }, 500);
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error(err?.data?.message || err.error);
+  //   }
+  // };
+
+  const submitHandler = async (data) => {
     try {
-      const newData = {
-        ...data,
-        assets: [...URLS, ...uploadedFileURLs],
-        team,
-        stage,
-        priority,
-      };
+      const formData = new FormData();
+
+      formData.append("title", data.title);
+      formData.append("date", data.date);
+      formData.append("stage", stage);
+      formData.append("priority", priority);
+
+      team.forEach((member, index) => {
+        formData.append(`team[${index}]`, member);
+      });
+
+      for (let i = 0; i < assets.length; i++) {
+        formData.append("assets", assets[i]);
+      }
 
       const res = task?._id
-        ? await updateTask({ ...newData, _id: task._id }).unwrap()
-        : await createTask(newData).unwrap();
+        ? await updateTask({ formData, id: task._id }).unwrap()
+        : await createTask(formData).unwrap();
 
       toast.success(res.message);
-
-      setTimeout(() => {
-        setOpen(false);
-      }, 500);
+      setTimeout(() => setOpen(false), 500);
     } catch (err) {
       console.log(err);
-      toast.error(err?.data?.message || err.error);
+      toast.error(err?.data?.message || err.message || "Something went wrong");
     }
   };
 
@@ -99,7 +128,7 @@ const AddTask = ({ open, setOpen, task }) => {
   const uploadFile = async (file) => {
     const storage = getStorage(app);
 
-    const name = new Date().getTime() + file.name;
+    const name = file.name;
     const storageRef = ref(storage, name);
 
     const uploadTask = uploadBytesResumable(storageRef, file);
@@ -187,6 +216,7 @@ const AddTask = ({ open, setOpen, task }) => {
                 >
                   <input
                     type="file"
+                    name="assets"
                     className="hidden"
                     id="imgUpload"
                     onChange={(e) => handleSelect(e)}

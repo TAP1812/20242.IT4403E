@@ -112,16 +112,17 @@ const TaskCard = ({ task }) => {
           </>
         )}
 
-        <div className="w-full pb-2">
-          <button
-            onClick={() => setOpen(true)}
-            disabled={user.isAdmin ? false : true}
-            className="w-full flex gap-4 text-gray-500 text-sm font-semibold disabled:cursor-not-allowed disabled:text-gray-300"
-          >
-            <IoMdAdd className="text-lg" />
-            <span>ADD SUBTASK</span>
-          </button>
-        </div>
+        {user?.isAdmin && (
+          <div className="w-full pb-2">
+            <button
+              onClick={() => setOpen(true)}
+              className="w-full flex gap-4 text-gray-500 text-sm font-semibold disabled:cursor-not-allowed disabled:text-gray-300"
+            >
+              <IoMdAdd className="text-lg" />
+              <span>ADD SUBTASK</span>
+            </button>
+          </div>
+        )}
       </div>
 
       <AddSubTask open={open} setOpen={setOpen} id={task?._id} />

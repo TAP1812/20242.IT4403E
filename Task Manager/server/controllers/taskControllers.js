@@ -2,25 +2,52 @@ import express from "express";
 import Task from "../models/task.js";
 import User from "../models/user.js";
 import Notice from "../models/notification.js";
+import bucket from "../config/firebase.js";
+import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 
 export const createTask = async (req, res) => {
   try {
-    const { title, team, stage, date, priority, assets } = req.body;
+    const { title, team, stage, date, priority } = req.body;
+
+    const uploadedUrls = await Promise.all(
+      req.files.map(file => {
+        const fileName = `${uuidv4()}_${file.originalname}`;
+        const fileUpload = bucket.file(fileName);
+
+        return new Promise((resolve, reject) => {
+          const stream = fileUpload.createWriteStream({
+            metadata: { contentType: file.mimetype },
+            resumable: false,
+          });
+
+          stream.on('error', reject);
+
+          stream.on('finish', async () => {
+            await fileUpload.makePublic();
+            const url = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+            resolve(url);
+          });
+
+          stream.end(file.buffer);
+        });
+      })
+    );
+
     const task = await Task.create({
       title,
       team,
       stage: stage.toLowerCase(),
       date,
       priority: priority.toLowerCase(),
-      assets,
+      assets: uploadedUrls,
     });
 
     let text = `New task has been assigned to you. `;
 
     if (task.team.length > 1) {
-      text = text + `and ${task.team.length - 1} others`;
+      text = text + `and ${task.team.length - 1} others. `;
     }
 
     text =
@@ -328,7 +355,6 @@ export const deleteRestoreTask = async (req, res) => {
       await Task.deleteMany({ isTrashed: true });
     } else if (actionType === "restore") {
       const resp = await Task.findById(id);
-      console.log(resp);
       resp.isTrashed = false;
       resp.save();
     } else if (actionType === "restoreAll") {
