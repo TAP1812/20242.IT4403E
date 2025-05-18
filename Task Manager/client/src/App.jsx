@@ -98,7 +98,7 @@ function App() {
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/tasks/:status" element={<Tasks />} />
           <Route path="/tasks/details/:id" element={<TaskDetails />} />
-          <Route path="/users" element={<Users />} />
+          <Route path="/team" element={<Users />} />
           <Route path="/trashed" element={<Trash />} />
         </Route>
         <Route path="*" element={<Navigate to="/dashboard" />} />

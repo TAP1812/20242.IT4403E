@@ -18,13 +18,9 @@ const ChangePassword = ({ open, setOpen }) => {
   const [changeUserPassword, { isLoading }] = useChangePasswordMutation();
 
   const handleOnSubmit = async (data) => {
-    // if (data.password !== data.cpass) {
-    //   toast.warning("Passwords doesn't match");
-    //   return;
-    // }
     try {
       const res = await changeUserPassword(data).unwrap();
-      toast.success("New User added successfully");
+      toast.success("Password is changed successfully");
 
       setTimeout(() => {
         setOpen(false);
@@ -68,17 +64,6 @@ const ChangePassword = ({ open, setOpen }) => {
               })}
               error={errors.password ? errors.password.message : ""}
             />
-            {/* <Textbox
-              placeholder='Confirm New Password'
-              type='password'
-              name='cpass'
-              label='Confirm New Password'
-              className='w-full rounded'
-              register={register("cpass", {
-                required: "Confirm New Password is required!",
-              })}
-              error={errors.cpass ? errors.cpass.message : ""}
-            /> */}
           </div>
 
           {isLoading ? (
