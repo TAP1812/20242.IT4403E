@@ -312,32 +312,28 @@ const Taskdetails = () => {
               <div className="w-full md:w-1/2 space-y-8">
                 <p className="text-lg font-semibold">ASSETS</p>
 
-                <div className="w-full space-y-8">
-                  <p className="text-lg font-semibold">ASSETS</p>
+                <div className="w-full flex flex-col gap-4">
+                  {task?.assets?.map((el, index) => {
+                    const rawFileName = el.split("/").pop().split("_").pop();
+                    const decodedFileName = decodeURIComponent(
+                      rawFileName || ""
+                    );
 
-                  <div className="w-full flex flex-col gap-4">
-                    {task?.assets?.map((el, index) => {
-                      const rawFileName = el.split("/").pop().split("_").pop();
-                      const decodedFileName = decodeURIComponent(
-                        rawFileName || ""
-                      );
-
-                      return (
-                        <div
-                          key={index}
-                          className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm w-full"
+                    return (
+                      <div
+                        key={index}
+                        className="border border-gray-300 rounded-lg p-4 bg-white shadow-sm w-full"
+                      >
+                        <a
+                          href={el}
+                          download={decodedFileName}
+                          className="block text-sm text-blue-600 hover:underline truncate"
                         >
-                          <a
-                            href={el}
-                            download={decodedFileName}
-                            className="block text-sm text-blue-600 hover:underline truncate"
-                          >
-                            {decodedFileName}
-                          </a>
-                        </div>
-                      );
-                    })}
-                  </div>
+                          {decodedFileName}
+                        </a>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
