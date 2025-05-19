@@ -37,7 +37,6 @@ const Login = () => {
   const [login, { isLoading }] = useLoginMutation();
 
   const handleCaptchaChange = (value) => {
-    console.log("CAPTCHA value changed:", value);
     setCaptchaValue(value);
   };
 
@@ -83,7 +82,6 @@ const Login = () => {
       navigate("/dashboard");
 
     } catch (error) {
-      console.error("Login error:", error);
 
       const newAttempts = loginAttempts + 1;
       setLoginAttempts(newAttempts);

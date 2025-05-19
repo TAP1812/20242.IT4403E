@@ -46,8 +46,6 @@ const AddTask = ({ open, setOpen, task }) => {
       });
     }
   }, [open, reset]);
-  
-  console.log("team", task?.team);
 
   const [team, setTeam] = useState(task?.team || []);
   const [stage, setStage] = useState(task?.stage?.toUpperCase() || LISTS[0]);
@@ -61,43 +59,6 @@ const AddTask = ({ open, setOpen, task }) => {
   const [createTask, { isLoading }] = useCreateTaskMutation();
   const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
   const URLS = task?.assets ? [...task.assets] : [];
-
-  // const submitHandler = async (data) => {
-  //   for (const file of assets) {
-  //     setUploading(true);
-  //     try {
-  //       await uploadFile(file);
-  //     } catch (error) {
-  //       console.error("Error uploading file:", error.message);
-  //       return;
-  //     } finally {
-  //       setUploading(false);
-  //     }
-  //   }
-
-  //   try {
-  //     const newData = {
-  //       ...data,
-  //       assets: [...URLS, ...uploadedFileURLs],
-  //       team,
-  //       stage,
-  //       priority,
-  //     };
-
-  //     const res = task?._id
-  //       ? await updateTask({ ...newData, _id: task._id }).unwrap()
-  //       : await createTask(newData).unwrap();
-
-  //     toast.success(res.message);
-
-  //     setTimeout(() => {
-  //       setOpen(false);
-  //     }, 500);
-  //   } catch (err) {
-  //     console.log(err);
-  //     toast.error(err?.data?.message || err.error);
-  //   }
-  // };
 
   const submitHandler = async (data) => {
     try {
@@ -116,8 +77,6 @@ const AddTask = ({ open, setOpen, task }) => {
         formData.append("assets", assets[i]);
       }
 
-      console.log("formData:", formData);
-
       const taskID = task?._id;
 
       const res = task?._id
@@ -127,8 +86,7 @@ const AddTask = ({ open, setOpen, task }) => {
       toast.success("Update task successfully");
       setTimeout(() => setOpen(false), 500);
     } catch (err) {
-      console.log(err);
-      toast.error(err?.data?.message || err.message || "Something went wrong");
+      toast.error("Failed to update task");
     }
   };
 

@@ -27,8 +27,7 @@ const AddSubTask = ({ open, setOpen, id }) => {
         setOpen(false);
       }, 500);
     } catch (err) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
+      toast.error("Failed to add subtask.");
     }
   };
 

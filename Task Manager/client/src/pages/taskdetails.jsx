@@ -103,8 +103,7 @@ const Activities = ({ activity, id, refetch }) => {
       toast.success(res?.message);
       refetch();
     } catch (err) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
+      toast.error("Failed to submit activity.");
     }
   };
 

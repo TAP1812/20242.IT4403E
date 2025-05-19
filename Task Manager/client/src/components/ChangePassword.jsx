@@ -26,8 +26,7 @@ const ChangePassword = ({ open, setOpen }) => {
         setOpen(false);
       }, 1500);
     } catch (err) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
+      toast.error("Something went wrong");
     }
   };
 

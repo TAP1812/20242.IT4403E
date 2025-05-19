@@ -35,7 +35,6 @@ export const verifyCaptcha = async (req, res, next) => {
 
         next();
     } catch (error) {
-        console.error('CAPTCHA verification error:', error);
         return res.status(500).json({
             status: false,
             message: "Error verifying CAPTCHA"

@@ -44,8 +44,7 @@ const TaskDialog = ({ task, isAdmin }) => {
         window.location.reload();
       }, 500);
     } catch (err) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
+      toast.error("Failed to duplicate task");
     }
   };
 
@@ -67,8 +66,7 @@ const TaskDialog = ({ task, isAdmin }) => {
         window.location.reload();
       }, 500);
     } catch (err) {
-      console.log(err);
-      toast.error(err?.data?.message || err.error);
+      toast.error("Failed to delete task.");
     }
   };
 

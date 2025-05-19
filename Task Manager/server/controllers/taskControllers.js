@@ -74,8 +74,7 @@ export const createTask = async (req, res) => {
       .status(200)
       .json({ status: true, message: "Task created successfully" });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to create task" });
   }
 };
 
@@ -130,8 +129,7 @@ export const duplicateTask = async (req, res) => {
       .status(200)
       .json({ status: true, message: "Task duplicated successfully", newTask });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to duplicate task." });
   }
 };
 
@@ -152,8 +150,7 @@ export const postTaskActivity = async (req, res) => {
       .status(200)
       .json({ status: true, message: "Task activity posted successfully" });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to submit task activity" });
   }
 };
 
@@ -225,8 +222,7 @@ export const dashboardStatistics = async (req, res) => {
       summary,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to fetch statistics." });
   }
 };
 
@@ -260,8 +256,7 @@ export const getTasks = async (req, res) => {
 
     return res.status(200).json({ status: true, tasks });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to get tasks" });
   }
 };
 
@@ -281,8 +276,7 @@ export const getTask = async (req, res) => {
 
     return res.status(200).json({ status: true, task });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to get task details" });
   }
 };
 
@@ -307,24 +301,44 @@ export const createSubTask = async (req, res) => {
       .status(200)
       .json({ status: true, message: "Subtask created successfully" });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to add subtask." });
   }
 };
 
 export const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(req.body);
-    const { title, team, stage, date, priority, assets } = req.body;
+    const { title, team, stage, date, priority } = req.body;
     const task = await Task.findById(id);
+
+    const uploadedUrls = req.files && req.files.length > 0
+      ? await Promise.all(
+          req.files.map(file => {
+            const fileName = `${uuidv4()}_${file.originalname}`;
+            const fileUpload = bucket.file(fileName);
+            return new Promise((resolve, reject) => {
+              const stream = fileUpload.createWriteStream({
+                metadata: { contentType: file.mimetype },
+                resumable: false,
+              });
+              stream.on('error', reject);
+              stream.on('finish', async () => {
+                await fileUpload.makePublic();
+                const url = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+                resolve(url);
+              });
+              stream.end(file.buffer);
+            });
+          })
+        )
+      : [];
 
     task.title = title;
     task.team = team;
     task.stage = stage.toLowerCase();
     task.date = date;
     task.priority = priority.toLowerCase();
-    task.assets = assets;
+    task.assets = uploadedUrls;
 
     await task.save();
 
@@ -332,8 +346,7 @@ export const updateTask = async (req, res) => {
       .status(200)
       .json({ status: true, message: "Task updated successfully" });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to update task." });
   }
 };
 
@@ -350,8 +363,7 @@ export const trashTask = async (req, res) => {
       .status(200)
       .json({ status: true, message: "Task moved to trash successfully" });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to delete task." });
   }
 };
 
@@ -383,8 +395,7 @@ export const deleteRestoreTask = async (req, res) => {
           : "Task deleted successfully",
     });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to clean trash" });
   }
 };
 

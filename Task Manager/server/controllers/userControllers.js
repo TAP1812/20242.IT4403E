@@ -64,14 +64,12 @@ export const registerUser = async (req, res) => {
       password: randomPassword,
     });
 
-    // Chỉ trả về thông báo thành công, không trả về user hay password
     return res.status(201).json({
       status: true,
       message: "User created successfully"
     });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to create user" });
   }
 };
 
@@ -116,7 +114,6 @@ export const loginUser = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     return res.status(400).json({
       status: false,
       message: "An error occurred. Please try again.",
@@ -132,8 +129,7 @@ export const logoutUser = async (req, res) => {
     });
     return res.status(200).json({ status: true, message: "Logout successful" });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to logout" });
   }
 };
 
@@ -142,8 +138,7 @@ export const getTeamList = async (req, res) => {
     const users = await User.find().select("name title role email isActive");
     return res.status(201).json(users);
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to get users" });
   }
 };
 
@@ -158,8 +153,7 @@ export const getNotificationsList = async (req, res) => {
 
     return res.status(201).json(notice);
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to get notifications." });
   }
 };
 
@@ -194,8 +188,7 @@ export const updateUserProfile = async (req, res) => {
         });
     }
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to update user profile" });
   }
 };
 
@@ -222,8 +215,7 @@ export const markNotificationRead = async (req, res) => {
       .status(201)
       .json({ status: true, message: "Notification marked as read" });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to mark as read" });
   }
 };
 
@@ -263,8 +255,7 @@ export const changeUserPassword = async (req, res) => {
       message: "Password changed successfully",
     });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to change password." });
   }
 };
 
@@ -288,8 +279,7 @@ export const activateUserProfile = async (req, res) => {
       return res.status(404).json({ status: false, message: "User not found" });
     }
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to change user status" });
   }
 };
 
@@ -302,8 +292,7 @@ export const deleteUserProfile = async (req, res) => {
       .status(201)
       .json({ status: true, message: "User deleted successfully" });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to delete user" });
   }
 };
 
@@ -329,8 +318,7 @@ export const resetPassword = async (req, res) => {
     });
     return res.status(200).json({ status: true, message: "If this email exists, a reset link has been sent." });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to reset password" });
   }
 };
 
@@ -356,8 +344,7 @@ export const requestResetPassword = async (req, res) => {
     });
     return res.status(200).json({ status: true, message: "If this email exists, a reset link has been sent." });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to reset password" });
   }
 };
 
@@ -377,7 +364,6 @@ export const confirmResetPassword = async (req, res) => {
     await user.save();
     return res.status(200).json({ status: true, message: "Password has been reset successfully." });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ status: false, message: error.message });
+    return res.status(400).json({ status: false, message: "Failed to reset password" });
   }
 };
