@@ -315,6 +315,7 @@ export const createSubTask = async (req, res) => {
 export const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(req.body);
     const { title, team, stage, date, priority, assets } = req.body;
     const task = await Task.findById(id);
 

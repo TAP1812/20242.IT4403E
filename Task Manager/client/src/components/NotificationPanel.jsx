@@ -63,7 +63,7 @@ const NotificationPanel = () => {
     <>
       <Popover className='relative'>
         <PopoverButton className='inline-flex items-center outline-none'>
-          <div className='w-8 h-8 flex items-center justify-center text-gray-800 dark:text-white  relative'>
+          <div className='w-8 h-8 flex items-center justify-center text-gray-800 relative'>
             <IoIosNotificationsOutline className='text-2xl' />
             {data?.length > 0 && (
               <span className='absolute text-center top-0 right-1 text-sm text-white font-semibold w-4 h-4 rounded-full bg-red-600'>
@@ -85,12 +85,12 @@ const NotificationPanel = () => {
           <PopoverPanel className='absolute -right-16 md:-right-2 z-10 mt-5 flex w-screen max-w-max  px-4'>
             {({ close }) =>
               data?.length > 0 && (
-                <div className='w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white dark:bg-[#1f1f1f] text-sm leading-6 shadow-lg ring-1 ring-gray-900/5'>
+                <div className='w-screen max-w-md flex-auto overflow-hidden rounded-3xl bg-white text-sm leading-6 shadow-lg ring-1 ring-gray-900/5'>
                   <div className='p-4'>
                     {data?.slice(0, 5).map((item, index) => (
                       <div
                         key={item._id + index}
-                        className='group relative flex gap-x-4 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-[#1c1c1c]'
+                        className='group relative flex gap-x-4 rounded-lg p-4 hover:bg-gray-50'
                       >
                         <div className='mt-1 h-8 w-8 flex items-center justify-center rounded-lg bg-gray-200 group-hover:bg-white'>
                           {ICONS[item.notiType]}
@@ -100,13 +100,13 @@ const NotificationPanel = () => {
                           className='cursor-pointer'
                           onClick={() => viewHandler(item)}
                         >
-                          <div className='flex items-center gap-3 font-semibold text-gray-900 capitalize dark:text-gray-200'>
+                          <div className='flex items-center gap-3 font-semibold text-gray-900 capitalize'>
                             <p> {item.notiType}</p>
                             <span className='text-xs font-normal lowercase'>
                               {moment(item.createdAt).fromNow()}
                             </span>
                           </div>
-                          <p className='line-clamp-1 mt-1 text-gray-600 dark:text-gray-500'>
+                          <p className='line-clamp-1 mt-1 text-gray-600 '>
                             {item.text}
                           </p>
                         </div>
@@ -114,14 +114,14 @@ const NotificationPanel = () => {
                     ))}
                   </div>
 
-                  <div className='grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50 dark:bg-[#1f1f1f]'>
+                  <div className='grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50'>
                     {callsToAction.map((item) => (
                       <Link
                         key={item.name}
                         onClick={
                           item?.onClick ? () => item.onClick() : () => close()
                         }
-                        className='flex items-center justify-center gap-x-2.5 p-3 font-semibold text-blue-600 hover:bg-gray-100 dark:hover:bg-[#1c1c1c]'
+                        className='flex items-center justify-center gap-x-2.5 p-3 font-semibold text-blue-600 hover:bg-gray-100'
                       >
                         {item.name}
                       </Link>

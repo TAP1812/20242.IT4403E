@@ -35,17 +35,19 @@ const AddTask = ({ open, setOpen, task }) => {
   } = useForm({ defaultValues });
 
   useEffect(() => {
-  if (!open) {
-    reset({
-      title: "",
-      date: dateFormatter(new Date()),
-      team: [],
-      stage: "",
-      priority: "",
-      assets: [],
-    });
-  }
-}, [open, reset]);
+    if (!open) {
+      reset({
+        title: "",
+        date: dateFormatter(new Date()),
+        team: [],
+        stage: "",
+        priority: "",
+        assets: [],
+      });
+    }
+  }, [open, reset]);
+  
+  console.log("team", task?.team);
 
   const [team, setTeam] = useState(task?.team || []);
   const [stage, setStage] = useState(task?.stage?.toUpperCase() || LISTS[0]);
@@ -114,11 +116,15 @@ const AddTask = ({ open, setOpen, task }) => {
         formData.append("assets", assets[i]);
       }
 
+      console.log("formData:", formData);
+
+      const taskID = task?._id;
+
       const res = task?._id
-        ? await updateTask({ formData, id: task._id }).unwrap()
+        ? await updateTask({ formData: formData, id: taskID}).unwrap()
         : await createTask(formData).unwrap();
 
-      toast.success(res.message);
+      toast.success("Update task successfully");
       setTimeout(() => setOpen(false), 500);
     } catch (err) {
       console.log(err);

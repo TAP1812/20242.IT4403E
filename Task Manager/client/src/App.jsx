@@ -96,12 +96,11 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tasks" element={<Tasks />} />
-          <Route path="/tasks/:status" element={<Tasks />} />
-          <Route path="/tasks/details/:id" element={<TaskDetails />} />
           <Route path="/team" element={<Users />} />
           <Route path="/trashed" element={<Trash />} />
+          <Route path="/task/:id" element={<TaskDetails />} />
         </Route>
-        <Route path="*" element={<Navigate to="/dashboard" />} />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
       </Routes>
     </main>
   );
