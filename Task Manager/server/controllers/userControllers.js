@@ -173,7 +173,7 @@ export const updateUserProfile = async (req, res) => {
         : isAdmin && userId !== _id
         ? _id
         : userId;
-    const user = await User.findById(id).select("name email title role");
+    const user = await User.findById(id).select("name email title role isAdmin isActive");
 
     if (user) {
       user.name = req.body.name || user.name;
